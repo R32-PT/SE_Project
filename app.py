@@ -1,239 +1,92 @@
-import MySQLdb.cursors
-import mysql.connector
+import MySQLdb
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_mysqldb import MySQL
+import MySQLdb.cursors
 
 app = Flask(__name__)
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 app.secret_key = 'hotdog'
 
-app.config['MYSQL_HOST'] = 'us-cdbr-iron-east-01.cleardb.net'
-app.config['MYSQL_USER'] = 'b2c04ab25f2fad'
-app.config['MYSQL_PASSWORD'] = 'e2f37027'
-app.config['MYSQL_DB'] = 'heroku_4f71138a5925978'
+app.config['MYSQL_HOST'] = 'sh4ob67ph9l80v61.cbetxkdyhwsb.us-east-1.rds.amazonaws.com'
+app.config['MYSQL_USER'] = 'nj317ziyvdn663sh'
+app.config['MYSQL_PASSWORD'] = 'd4mj8hlti6ajkw5r'
+app.config['MYSQL_DB'] = 'r2e87bd791lbllyo'
 
-# Initialize MySQL
 mysql = MySQL(app)
 
-
-# http://localhost:5000/pythonlogin/ - this will be the login page, we need to use both GET and POST requests
-
-
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
+@app.route('/login', methods=['GET','POST'])
 def login():
-    # Output message if something goes wrong...
-    msg = ''
-    # Check if "username" and "password" POST requests exist (user submitted form)
+    
+    message = ""
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
-        # Create variables for easy access
-        username = request.form['username']
+        user = request.form['username']
         password = request.form['password']
-        # Check if account exists using MySQL
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM employee_accounts WHERE username = %s AND password = %s', (username, password,))
-        # Fetch one record and return result
-        account = cursor.fetchone()
-        # If account exists in accounts table in our database
-        if account:
-            # Create session data, we can access this data in other routes
+        cursor.execute('SELECT * FROM users WHERE username = %s AND password = %s', (user, password,))
+        loggedIn = cursor.fetchone()
+        
+        if loggedIn:
             session['loggedin'] = True
-            session['id'] = account['id']
-            session['name'] = account['name']
-            session['username'] = account['username']
-            session['password'] = account['password']
-            session['is_manager'] = account['is_manager']
-            if session['is_manager'] == 1:
-                # Redirect to manager home page
-                return render_template('manager_home.html', account=account)
-            else:
-                if session['is_manager'] == 0:
-                    # Redirect to employee home page
-                    return render_template('employee_home.html', account=account)
+            session['id'] = loggedIn['id']
+            session['username'] = loggedIn['username']
+            session['password'] = loggedIn['password']
+            session['role'] = loggedIn['role']
+            
+            if session['role'] == 'ADMIN':
+                return render_template("support.html", loggedIn = loggedIn)
+            elif session['role'] == 'FINANCE_ADMIN':
+                return render_template("finance.html", loggedIn = loggedIn)
+            elif session['role'] == 'HR_ADMIN':
+                return render_template("hr.html", loggedIn = loggedIn)
+            return render_template("finance.html", loggedIn = loggedIn)
+
+            return 'log in success'
         else:
-            # Account doesnt exist or username/password incorrect
-            msg = 'Incorrect username/password!'
-    # Show the login form with message (if any)
-    return render_template('index.html', msg=msg)
+            message = "log in failed"
+
+    return render_template("login.html",message = message)
 
 
-@app.route('/insert')
-def insert():
-    # Check if user is loggedin
+@app.route('/support')
+def finance():
     if 'loggedin' in session:
-        return render_template('insert.html')
-    else:
-        return redirect(url_for('login'))
+        return render_template("support.html")
+    return redirect(url_for('login'))
 
-
-@app.route('/insert_account')
-def insert_account():
-    # Check if user is loggedin
+@app.route('/finance')
+def finance():
     if 'loggedin' in session:
-        return render_template('insert.account.html')
-    else:
-        return redirect(url_for('login'))
+        return render_template("finance.html")
+    return redirect(url_for('login'))
 
-
-@app.route('/timestamp')
-def timestamp():
-    # Check if user is loggedin
+@app.route('/sales')
+def finance():
     if 'loggedin' in session:
-        return render_template('timestamp.html')
-    else:
-        return redirect(url_for('login'))
+        return render_template("sales.html")
+    return redirect(url_for('login'))    
 
+@app.route('/hr')
+def hr():
+    if 'loggedin' in session:
+        return render_template("hr.html")
+    return redirect(url_for('login'))
 
-# http://localhost:5000/python/logout - this will be the logout page
+@app.route('/technology')
+def finance():
+    if 'loggedin' in session:
+        return render_template("technology.html")
+    return redirect(url_for('login'))
+
 @app.route('/logout')
 def logout():
-    # Remove session data, this will log the user out
-    session.pop('loggedin', None)
-    session.pop('id', None)
-    session.pop('username', None)
-    # Redirect to login page
+    session.pop('loggedin',None)
+    session.pop('id',None)
+    session.pop('username',None)
+    session.pop('password',None)
+    session.pop('role',None)
     return redirect(url_for('login'))
 
-
-# http://localhost:5000/pythinlogin/home - this will be the home page, only accessible for loggedin users
-
-
-@app.route('/home')
-def home():
-    # Check if user is loggedin
-    if 'loggedin' in session:
-        if session['is_manager'] == 1:
-            return redirect(url_for('manager_home'))
-        else:
-            if session['is_manager'] == 0:
-                return redirect(url_for('employee_home'))
-    # User is not loggedin redirect to login page
-    return redirect(url_for('login'))
-
-
-@app.route('/employee_home')
-def employee_home():
-    # Check if user is loggedin
-    if 'loggedin' in session:
-        # User is loggedin show them the home page
-        return render_template('employee_home.html', account=session)
-    # User is not loggedin redirect to login page
-    return redirect(url_for('login'))
-
-
-@app.route('/manager_home')
-def manager_home():
-    # Check if user is loggedin
-    if 'loggedin' in session:
-        # User is loggedin show them the home page
-        return render_template('manager_home.html', account=session)
-    # User is not loggedin redirect to login page
-    return redirect(url_for('login'))
-
-
-# http://localhost:5000/pythinlogin/profile - this will be the profile page, only accessible for loggedin users
-
-
-@app.route('/profile')
-def profile():
-    # Check if user is loggedin
-    if 'loggedin' in session:
-        # We need all the account info for the user so we can display it on the profile page
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM employee_accounts WHERE id = %s', (session['id'],))
-        account = cursor.fetchone()
-        # Show the profile page with account info
-        return render_template('profile.html', account=account)
-    # User is not loggedin redirect to login page
-    return redirect(url_for('login'))
-
-
-@app.route('/reports')
-def reports():
-    # Check if user is loggedin
-    if 'loggedin' in session:
-        # We need all the account info for the user so we can display it on the profile page
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM employee_accounts WHERE id = %s', (session['id'],))
-        account = cursor.fetchone()
-        if account['is_manager'] == 1:
-            # Show the manager profile page with account info
-            return redirect(url_for('manager_reports'))
-        else:
-            if session['is_manager'] == 0:
-                # Show the employee profile page with account info
-                return redirect(url_for('employee_reports'))
-    # User is not loggedin redirect to login page
-    return redirect(url_for('login'))
-
-
-@app.route('/employee_reports')
-def employee_reports():
-    # Check if user is loggedin
-    if 'loggedin' in session:
-        # We need all the account info for the user so we can display it on the profile page
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM assigned WHERE id = %s', (session['id'],))
-        assigned = cursor.fetchone()
-        # User is loggedin show them the home page
-        return render_template('employee_reports.html', assigned=assigned)
-    # User is not loggedin redirect to login page
-    return redirect(url_for('login'))
-
-
-@app.route('/manager_reports')
-def manager_reports():
-    # Check if user is loggedin
-    if 'loggedin' in session:
-        # User is loggedin show them the report page
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM employee_accounts WHERE id = %s', (session['id'],))
-        account = cursor.fetchone()
-        return render_template('manager_reports.html', account=session)
-    # User is not loggedin redirect to login page
-    return redirect(url_for('login'))
-
-
-@app.route('/assignments')
-def assignments():
-    # Check if user is loggedin
-    if 'loggedin' in session:
-        # We need all the account info for the user so we can display it on the profile page
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM employee_accounts WHERE id = %s', (session['id'],))
-        account = cursor.fetchone()
-        # Show the profile page with account info
-        return render_template('assignments.html', account=account)
-    # User is not loggedin redirect to login page
-    return redirect(url_for('login'))
-
-
-@app.route('/tasks')
-def tasks():
-    # Check if user is loggedin
-    if 'loggedin' in session:
-        # We need all the account info for the user so we can display it on the profile page
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM employee_accounts WHERE id = %s', (session['id'],))
-        account = cursor.fetchone()
-        # Show the profile page with account info
-        return render_template('tasks.html', account=account)
-    # User is not loggedin redirect to login page
-    return redirect(url_for('login'))
-
-
-@app.route('/projects')
-def projects():
-    # Check if user is loggedin
-    if 'loggedin' in session:
-        # We need all the account info for the user so we can display it on the profile page
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM employee_accounts WHERE id = %s', (session['id'],))
-        account = cursor.fetchone()
-        # Show the profile page with account info
-        return render_template('projects.html', account=account)
-    # User is not loggedin redirect to login page
-    return redirect(url_for('login'))
-
-
-if __name__ == '__main__':
-    app.run()
+if __name__ == "__main__":
+    app.run(debug=True)

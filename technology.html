@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/f.css') }}">
+    </head>
+    <body>
+        <div class="navbar">
+            <a class="active" href="{{url_for ('logout')}}">log out</a>
+        </div>
+        <div style="text-align: center;">
+            <h2>Finance Admin Portal</h2>
+        </div>
+        <div style="text-align: center;">
+            <div class="link" style="display: inline-block; text-align: center;">
+                <h1>Welcome to the technology admin page</h1>
+                <h1>Below are the links you have access too</h1>
+                <a class="active" href="#Application Monitoring">Application Monitoring</a>
+                <a class="active" href="#Tech Support">Tech Support</a>
+                <a class="active" href="#App Development">App Development</a>
+                <a class="active" href="#App Admin">App Admin</a>
+                <a class="active" href="#Release Management">Release Management</a>
+            </div>
+        </div>
+    </body>
+</html>
