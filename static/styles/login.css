@@ -1,17 +1,22 @@
-input[type=text], input[type=password] {
-    width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    display: inline-block;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-  }
+.login{
+  color: bisque;
+  background-color: black;
+  border-style: groove;
+  border-width: 8px;
+  border-color: grey;
+  margin: auto;
+  padding-top: 20px;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-bottom: 25px;
+}
+
   
 .btn {
   padding: 10px 40px; 
-                background-color: #236B8E;  
-                color: #FFFFFF; 
-                font-style: oblique; 
-                font-weight: bold; 
-                border-radius: 10px; 
+  background-color: bisque;  
+  color: #FFFFFF; 
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: bold; 
+  border-radius: 5px; 
 }
