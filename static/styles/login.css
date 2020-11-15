@@ -1,5 +1,13 @@
+.a{
+ display: inline-block;
+  background-color: black;
+  padding-left: 30px;
+}
+
 .login{
   color: bisque;
+  display: inline-block;
+  text-align: center;
   background-color: black;
   border-style: groove;
   border-width: 8px;
@@ -19,4 +27,5 @@
   font-family: 'Times New Roman', Times, serif;
   font-weight: bold; 
   border-radius: 5px; 
+  
 }
