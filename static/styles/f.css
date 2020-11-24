@@ -1,7 +1,10 @@
 body {
-    color: burlywood;
+    background-color: grey;
     font-family: Arial, Helvetica, sans-serif;
     margin: 0;
+    background-image: url("https://wallpapercave.com/wp/X6PjOyY.png");
+    background-position: center;
+    background-size: cover;
 }
 h1 {
     font-size: 40px;
@@ -19,7 +22,6 @@ a{
 .link{
     font-size: 25px;
     background-color: black;
-    color: bisque;
     border-style: groove;
     border-width: 8px;
     border-color: grey;
@@ -30,8 +32,8 @@ a{
     padding-bottom: 25px;
 }
 .link a:hover{
-    background-color: burlywood;
-    color: wheat;
+    background-color: grey;
+    color: grey;
 }
 .link a:active{
     color: blue;
@@ -48,13 +50,13 @@ a{
 }
 .navbar a {
     float: left;
-    color: bisque;
+    color: white;
     padding: 20px 16px;
     font-size: 20px;
     text-align: center;
 }
 .navbar a:hover{
-    background-color: burlywood;
+    background-color: grey;
 }
 .navbar a:active{
     color: blue;
