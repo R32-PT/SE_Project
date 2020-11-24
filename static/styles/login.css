@@ -1,31 +1,54 @@
 .a{
- display: inline-block;
-  background-color: black;
+  display: inline-block;
   padding-left: 30px;
+  
+}
+
+body{
+  background-color: grey;
+  font-family: Tahoma, Geneva, sans-serif;
+  background-image: url("https://wallpapercave.com/wp/X6PjOyY.png");
+  background-position: center;
+  background-size: cover;
 }
 
 .login{
   color: bisque;
   display: inline-block;
   text-align: center;
-  background-color: black;
-  border-style: groove;
-  border-width: 8px;
-  border-color: grey;
+  border-radius: 15px;
   margin: auto;
-  padding-top: 20px;
-  padding-left: 30px;
-  padding-right: 30px;
-  padding-bottom: 25px;
+  padding-top: 45px;
+  padding-left: 85px;
+  padding-right: 85px;
+  padding-bottom: 45px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
+.login input{
+  border: none;
+  outline: none;
+  background: none;
+  border-bottom: 2px solid bisque;
+  
+}
+
+.textbox{
+  color: white;
 }
 
   
 .btn {
   padding: 10px 40px; 
-  background-color: bisque;  
-  color: #FFFFFF; 
-  font-family: 'Times New Roman', Times, serif;
+  color: bisque;  
   font-weight: bold; 
   border-radius: 5px; 
-  
+  border: 2px solid whitesmoke;
+}
+
+.btn :hover{
+  background-color: bisque;
 }
